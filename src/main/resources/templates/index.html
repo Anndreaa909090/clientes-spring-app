@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes - Spring Boot</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>Listado de Clientes</h1>
+        
+        <!-- Formulario para crear/editar cliente -->
+        <form th:object="${cliente}" th:action="${cliente.id != null} ? 
+              @{/actualizar/{id}(id=${cliente.id})} : @{/crear}" 
+              method="post" class="form-cliente">
+            <h2 th:text="${cliente.id != null} ? 'Editar Cliente' : 'Crear Cliente'">
+                Crear Cliente
+            </h2>
+            
+            <div class="form-group">
+                <input type="text" th:field="*{nombre}" placeholder="Nombre" required>
+                <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" 
+                      class="error-message"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" th:field="*{apellido}" placeholder="Apellido" required>
+                <span th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}" 
+                      class="error-message"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="email" th:field="*{email}" placeholder="Email" required>
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" 
+                      class="error-message"></span>
+            </div>
+            
+            <button type="submit" class="btn-primary">
+                <span th:text="${cliente.id != null} ? 'Actualizar' : 'Agregar Cliente'">
+                    Agregar Cliente
+                </span>
+            </button>
+            
+            <a th:if="${cliente.id != null}" href="/" class="btn-secondary">Cancelar</a>
+        </form>
+
+        <!-- Tabla de clientes -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Fecha de Creación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cliente : ${clientes}">
+                    <td th:text="${cliente.id}">1</td>
+                    <td th:text="${cliente.nombre}">Juan</td>
+                    <td th:text="${cliente.apellido}">Pérez</td>
+                    <td th:text="${cliente.email}">juan@example.com</td>
+                    <td th:text="${#temporals.format(cliente.fechaCreacion, 'dd/MM/yyyy HH:mm')}">
+                        2024-01-01
+                    </td>
+                    <td class="actions">
+                        <a th:href="@{/editar/{id}(id=${cliente.id})}" class="btn-edit">Editar</a>
+                        <a th:href="@{/eliminar/{id}(id=${cliente.id})}" 
+                           class="btn-delete" 
+                           onclick="return confirm('¿Estás seguro de eliminar este cliente?')">
+                            Eliminar
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
